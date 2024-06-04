@@ -10,6 +10,10 @@ use std::{
         Path,
         PathBuf,
     },
+    time::{
+        Duration,
+        Instant,
+    },
 };
 
 pub(crate) struct DirWalker {
@@ -64,7 +68,9 @@ pub fn estimate_size_async(dir: PathBuf) -> impl Iterator<Item = u64> {
     let mut size_total = 0;
     iter::from_fn(move || {
         size_total += size_iter.next()?;
-        for _ in 0..1_000 {
+
+        let timestamp_start = Instant::now();
+        while timestamp_start.elapsed() < Duration::from_millis(10) {
             match size_iter.next() {
                 Some(file_size) => size_total += file_size,
                 None => break,
