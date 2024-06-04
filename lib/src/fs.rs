@@ -1,8 +1,15 @@
 use std::{
-    fs::{self, DirEntry},
-    io, iter,
+    fs::{
+        self,
+        DirEntry,
+    },
+    io,
+    iter,
     os::windows::fs::MetadataExt,
-    path::{Path, PathBuf},
+    path::{
+        Path,
+        PathBuf,
+    },
 };
 
 pub(crate) struct DirWalker {

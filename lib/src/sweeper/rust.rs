@@ -1,8 +1,14 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use crate::{fs, path::PathEx, sweeper::SweeperError};
-
-use super::{SizeEstimator, SweepableTarget, Sweeper};
+use super::{
+    SweepableTarget,
+    Sweeper,
+};
+use crate::{
+    path::PathEx,
+    sweeper::SweeperError,
+    target::DirectoryTarget,
+};
 
 pub struct RustSweeper;
 
@@ -30,31 +36,6 @@ impl Sweeper for RustSweeper {
             return Ok(vec![]);
         }
 
-        Ok(vec![Box::new(RustTarget {
-            target_dir: dir.to_owned(),
-        })])
-    }
-}
-
-#[derive(Debug)]
-pub struct RustTarget {
-    target_dir: PathBuf,
-}
-
-impl SweepableTarget for RustTarget {
-    fn name(&self) -> &str {
-        "rust target"
-    }
-
-    fn path(&self) -> &Path {
-        &self.target_dir
-    }
-
-    fn estimated_size(&self) -> Box<SizeEstimator> {
-        Box::new(fs::estimate_size_async(self.target_dir.clone()))
-    }
-
-    fn cleanup(self, _dry_run: bool) -> Result<super::CleanupResult, SweeperError> {
-        todo!()
+        Ok(vec![Box::new(DirectoryTarget::new(dir.to_owned()))])
     }
 }

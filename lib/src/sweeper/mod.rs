@@ -1,16 +1,13 @@
-use std::{error, fmt::Debug, io, path::Path};
+use std::{
+    error,
+    fmt::Debug,
+    io,
+    path::Path,
+};
 
 use thiserror::Error;
 
-pub type SizeEstimator = dyn Iterator<Item = u64> + Send + Sync;
-
-pub trait SweepableTarget: Send + Debug {
-    fn name(&self) -> &str;
-    fn path(&self) -> &Path;
-
-    fn estimated_size(&self) -> Box<SizeEstimator>;
-    fn cleanup(self, dry_run: bool) -> Result<CleanupResult, SweeperError>;
-}
+use crate::target::SweepableTarget;
 
 /// A Sweeper implements a cleanup mechanism for a specific language or build artefact.
 pub trait Sweeper: Sync + Send {
@@ -33,12 +30,11 @@ pub enum SweeperError {
     Other(#[from] Box<dyn error::Error + Send>),
 }
 
-pub struct CleanupResult {
-    pub bytes_erased: usize,
-}
-
 mod rust;
 pub use rust::*;
 
 mod node;
 pub use node::*;
+
+mod cmake;
+pub use cmake::*;

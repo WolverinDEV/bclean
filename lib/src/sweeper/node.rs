@@ -1,8 +1,14 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
-use crate::{fs, path::PathEx};
-
-use super::{SizeEstimator, SweepableTarget, Sweeper, SweeperError};
+use super::{
+    SweepableTarget,
+    Sweeper,
+    SweeperError,
+};
+use crate::{
+    path::PathEx,
+    target::DirectoryTarget,
+};
 
 pub struct NodeSweeper;
 
@@ -34,31 +40,6 @@ impl Sweeper for NodeSweeper {
             return Ok(vec![]);
         }
 
-        Ok(vec![Box::new(NodeTarget {
-            target_dir: path.to_owned(),
-        })])
-    }
-}
-
-#[derive(Debug)]
-pub struct NodeTarget {
-    target_dir: PathBuf,
-}
-
-impl SweepableTarget for NodeTarget {
-    fn name(&self) -> &str {
-        "node_modules"
-    }
-
-    fn path(&self) -> &Path {
-        &self.target_dir
-    }
-
-    fn estimated_size(&self) -> Box<SizeEstimator> {
-        Box::new(fs::estimate_size_async(self.target_dir.clone()))
-    }
-
-    fn cleanup(self, _dry_run: bool) -> Result<super::CleanupResult, SweeperError> {
-        todo!()
+        Ok(vec![Box::new(DirectoryTarget::new(path.to_owned()))])
     }
 }

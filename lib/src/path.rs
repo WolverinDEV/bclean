@@ -1,4 +1,9 @@
-use std::{ffi::OsStr, fs::DirEntry, io, path::Path};
+use std::{
+    ffi::OsStr,
+    fs::DirEntry,
+    io,
+    path::Path,
+};
 
 static EMPTY_STR: &'static str = "";
 

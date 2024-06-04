@@ -14,3 +14,6 @@ ratatui = "0.26.3"
 crossterm = "0.27.0"
 anyhow = "1.0.86"
 tui-logger = { version = "0.11.1", features = ["crossterm"] }
+clap = { version = "4.5.4", features = ["derive"] }
+clap_derive = "4.5.4"
+dunce = "1.0.4"

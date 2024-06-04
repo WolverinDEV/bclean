@@ -1,11 +1,23 @@
 use std::{
     io,
     path::PathBuf,
-    sync::mpsc::{self, Receiver},
-    thread::{self, JoinHandle},
+    sync::mpsc::{
+        self,
+        Receiver,
+    },
+    thread::{
+        self,
+        JoinHandle,
+    },
 };
 
-use crate::{DirEntryEx, DirWalker, SweepableTarget, Sweeper, SweeperError};
+use crate::{
+    target::SweepableTarget,
+    DirEntryEx,
+    DirWalker,
+    Sweeper,
+    SweeperError,
+};
 
 pub struct CrewOptions {
     /// Keep searching the paths subdirectories even tough the parent directory
@@ -76,7 +88,7 @@ impl SweeperCrew {
                     .consume_report(CrewReport::ErrorFs(error));
             }
 
-            while let Some(item) = dir_walker.next_item() {
+            'search_loop: while let Some(item) = dir_walker.next_item() {
                 let item_path = item.path();
                 let mut target_found = false;
 
@@ -115,7 +127,8 @@ impl SweeperCrew {
 
                         if tx.send(target).is_err() {
                             /* Abort search */
-                            break;
+                            log::debug!("Aborting search as receiving end has been closed");
+                            break 'search_loop;
                         }
                     }
                 }
