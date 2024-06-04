@@ -3,7 +3,6 @@ mod fs;
 mod path;
 pub mod sweeper;
 pub mod target;
-pub mod utils;
 
 pub use crew::*;
 pub use fs::*;

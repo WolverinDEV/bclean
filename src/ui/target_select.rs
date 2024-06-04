@@ -23,7 +23,6 @@ use std::{
 };
 
 use bclean::{
-    utils,
     SizeEstimator,
     SweepableTarget,
 };
@@ -56,6 +55,7 @@ use ratatui::{
 };
 
 use super::ScrollableText;
+use crate::utils;
 
 struct TuiTargetSelectState {
     _target_id: u32,

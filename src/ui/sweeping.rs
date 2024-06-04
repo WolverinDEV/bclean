@@ -16,7 +16,6 @@ use std::{
 };
 
 use bclean::{
-    utils,
     CleanupResult,
     SweepableTarget,
     SweeperError,
@@ -44,7 +43,10 @@ use ratatui::{
     },
 };
 
-use crate::utils::format_duration;
+use crate::utils::{
+    self,
+    format_duration,
+};
 
 struct SpinerText {
     baseline: Instant,
