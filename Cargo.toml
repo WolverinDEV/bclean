@@ -1,0 +1,16 @@
+[workspace]
+members = ["lib"]
+
+[package]
+name = "bclean-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.11.3"
+log = "0.4.21"
+bclean = { path = "./lib" }
+ratatui = "0.26.3"
+crossterm = "0.27.0"
+anyhow = "1.0.86"
+tui-logger = { version = "0.11.1", features = ["crossterm"] }
