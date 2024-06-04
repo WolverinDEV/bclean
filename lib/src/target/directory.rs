@@ -1,10 +1,6 @@
-use std::{
-    path::{
-        Path,
-        PathBuf,
-    },
-    thread,
-    time::Duration,
+use std::path::{
+    Path,
+    PathBuf,
 };
 
 use super::{
@@ -41,11 +37,16 @@ impl SweepableTarget for DirectoryTarget {
         Box::new(fs::estimate_size_async(self.target_dir.clone()))
     }
 
-    fn cleanup(self, dry_run: bool) -> Result<CleanupResult, SweeperError> {
+    fn cleanup(&mut self, dry_run: bool) -> Result<CleanupResult, SweeperError> {
+        let size_total = self.estimated_size().last();
+        let result = CleanupResult {
+            bytes_erased: size_total,
+        };
         if dry_run {
-            thread::sleep(Duration::from_secs(10));
-            return Ok(CleanupResult { bytes_erased: 0 });
+            return Ok(result);
         }
-        todo!()
+
+        std::fs::remove_dir_all(&self.target_dir)?;
+        Ok(result)
     }
 }

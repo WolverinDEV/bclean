@@ -67,11 +67,13 @@ use ui::{
 };
 
 mod ui;
+mod utils;
 
 enum AppView {
     TargetSelect {
         view: SweeperWidget,
         show_no_selection: bool,
+        dry_run: bool,
     },
     Sweeping {
         view: SweepingWidget,
@@ -91,6 +93,7 @@ impl AppView {
             Self::TargetSelect {
                 view,
                 show_no_selection,
+                dry_run,
             } => {
                 if let Event::Key(key) = event {
                     if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
@@ -105,7 +108,7 @@ impl AppView {
                         }
 
                         *self = Self::Sweeping {
-                            view: SweepingWidget::new(view.remove_selected_targets()),
+                            view: SweepingWidget::new(view.remove_selected_targets(), *dry_run),
                         };
                         return;
                     }
@@ -154,6 +157,7 @@ impl Widget for &AppView {
             AppView::TargetSelect {
                 view,
                 show_no_selection,
+                ..
             } => {
                 view.render(area, buf);
                 if *show_no_selection {
@@ -198,6 +202,9 @@ struct Args {
 
     #[arg(long)]
     ui_logger: bool,
+
+    #[arg(short, long)]
+    dry_run: bool,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -216,7 +223,7 @@ fn main() -> anyhow::Result<()> {
     let root_path = match dunce::canonicalize(root_path) {
         Ok(path) => path,
         Err(err) => {
-            log::error!("Invalid root path: {:#}", err);
+            eprintln!("Invalid root path: {:#}", err);
             return Ok(());
         }
     };
@@ -240,6 +247,7 @@ fn main() -> anyhow::Result<()> {
     let mut view = AppView::TargetSelect {
         view: SweeperWidget::new(root_path.clone(), crew, CrewOptions::default()),
         show_no_selection: false,
+        dry_run: args.dry_run,
     };
 
     loop {

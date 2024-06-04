@@ -36,6 +36,7 @@ use ratatui::{
 };
 
 use super::TuiSweeperTargetSelect;
+use crate::utils::format_duration;
 
 #[derive(Debug, Default)]
 struct UiReportInfo {
@@ -140,21 +141,7 @@ impl Widget for &SweeperWidget {
                 .unwrap_or_else(|| self.time_started.elapsed());
 
             let mut line_segments = Vec::with_capacity(8);
-            line_segments.push(if time_elapsed.as_secs() < 60 * 60 {
-                Span::raw(format!(
-                    "{:0>2}:{:0>2}.{:0>2}",
-                    time_elapsed.as_secs() / 60,
-                    time_elapsed.as_secs() % 60,
-                    time_elapsed.subsec_millis() / 10
-                ))
-            } else {
-                Span::raw(format!(
-                    "{:0>2}:{:0>2}:{:0>2}",
-                    time_elapsed.as_secs() / (60 * 60),
-                    (time_elapsed.as_secs() / 60) % 60,
-                    time_elapsed.as_secs() % 60
-                ))
-            });
+            line_segments.push(Span::raw(format_duration(&time_elapsed)));
 
             if self.crew_finished {
                 line_segments.push(Span::raw(format!(" Finished {}", self.root_path.display())));
