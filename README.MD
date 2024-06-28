@@ -1,16 +1,17 @@
-# bclean - Removed unused build files
-bclean is a command line tool to identify and remove disk space wasted by build artefacts for various languages.
+# bclean - Remove unused build files
+bclean is a command line tool to identify and remove disk space wasted by build artefacts for various development languages.
 
 ## Features
 - Automatically identify build / cache files from the following languages / tools
   - Rust (`target`)
   - Node (`node_modules`)
+  - CMake (`cmake-build-[debug,release,relwithdebinfo,minsizerel]`)
 - Advanced filter to avoid recently used projects
 
 ## Motivation
 Working on a lot of different projects will clutter your disk overtime with various build and cache files. Especially for some development languages over time these files pile up tens of gigabytes.  
 These files do not only waste disk space, but also have to be backed up every time you're backing up your PC.  
-With `bclean` you can easily identify these folders and files globally on your PC and erase them reducting disk usage and backup times.
+With `bclean` you can easily identify these folders and files globally on your PC and easily erase them reducting disk usage and backup times.
 
 ## Contributing
 All contributations are highly apprechiated. Starting from fixing a type up to adding new providers to support cleaning other build files of other languages / tools.
