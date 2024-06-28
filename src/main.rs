@@ -48,12 +48,16 @@ mod utils;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    #[arg(short, long)]
+    /// Specify the root directory where bclean should search for sweepable targets.
+    /// Note: This can be a relative path.
+    #[arg(short, long, verbatim_doc_comment)]
     root: Option<PathBuf>,
 
+    /// Display the log in the terminal as a split screen.
     #[arg(long)]
     ui_logger: bool,
 
+    /// Do not actually sweep anything. Just simulate it.
     #[arg(short, long)]
     dry_run: bool,
 }
