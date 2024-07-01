@@ -154,10 +154,27 @@ impl TuiSweeperTargetSelect {
     }
 
     pub fn remove_selected_targets(&mut self) -> Vec<Box<dyn SweepableTarget>> {
-        self.targets
-            .extract_if(|_target_id, target| target.selected)
-            .map(|(_target_id, target)| target.target)
-            .collect()
+        // As soon as #70530 get's stabalized, we can use this instead:
+        // self.targets
+        //     .extract_if(|_target_id, target| target.selected)
+        //     .map(|(_target_id, target)| target.target)
+        //     .collect()
+
+        let selected_targets = self
+            .targets
+            .iter()
+            .filter(|(_, target)| target.selected)
+            .map(|(target_id, _)| *target_id)
+            .collect::<Vec<_>>();
+
+        let mut removed_targets = Vec::new();
+        for target_id in selected_targets {
+            let Some(target) = self.targets.remove(&target_id) else {
+                continue;
+            };
+            removed_targets.push(target.target);
+        }
+        removed_targets
     }
 
     fn cursor_target_mut(&mut self) -> Option<&mut TuiTargetSelectState> {

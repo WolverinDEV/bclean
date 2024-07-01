@@ -1,5 +1,3 @@
-#![feature(btree_extract_if)]
-
 use std::{
     self,
     env,
