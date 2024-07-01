@@ -5,7 +5,6 @@ use std::{
     },
     io,
     iter,
-    os::windows::fs::MetadataExt,
     path::{
         Path,
         PathBuf,
@@ -57,7 +56,7 @@ pub fn estimate_size_async(dir: PathBuf) -> impl Iterator<Item = u64> {
             };
 
             if file_meta.is_file() {
-                return Some(file_meta.file_size());
+                return Some(file_meta.len());
             }
 
             let _ = walker.insert_entries(&current_entry.path());
