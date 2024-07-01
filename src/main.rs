@@ -3,22 +3,18 @@
 use std::{
     self,
     env,
-    path::PathBuf,
 };
 
+use args::{
+    ArgSweeper,
+    Args,
+};
 use bclean::{
-    sweeper::{
-        CMakeSweeper,
-        NodeSweeper,
-        RustSweeper,
-    },
+    self,
     CrewOptions,
     SweeperCrew,
 };
-use clap::{
-    command,
-    Parser,
-};
+use clap::Parser;
 use crossterm::{
     self,
     event::{
@@ -40,27 +36,10 @@ use ui::{
     TuiAppLoggerWidget,
 };
 
+mod args;
 mod term;
 mod ui;
 mod utils;
-
-/// Automate the cleanup of left over build files
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    /// Specify the root directory where bclean should search for sweepable targets.
-    /// Note: This can be a relative path.
-    #[arg(short, long, verbatim_doc_comment)]
-    root: Option<PathBuf>,
-
-    /// Display the log in the terminal as a split screen.
-    #[arg(long)]
-    ui_logger: bool,
-
-    /// Do not actually sweep anything. Just simulate it.
-    #[arg(short, long)]
-    dry_run: bool,
-}
 
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
@@ -89,10 +68,16 @@ fn main() -> anyhow::Result<()> {
 
     let crew = {
         let mut crew = SweeperCrew::new();
-        crew.register(RustSweeper::new());
-        crew.register(NodeSweeper::new());
-        crew.register(CMakeSweeper::new());
 
+        let mut sweepers = args.sweeper.clone();
+        if !args.sweeper_no_defaults {
+            sweepers.extend(ArgSweeper::default_configuration());
+        }
+
+        for (sweeper, options) in sweepers {
+            log::info!("Register sweeper {:?} ({:?})", sweeper, options);
+            crew.register_boxed(sweeper.create_from_options(options.as_ref().map(String::as_str))?);
+        }
         crew
     };
 
